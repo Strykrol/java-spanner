@@ -841,7 +841,6 @@ public class GapicSpannerRpc implements SpannerRpc {
     final String databaseId =
         createDatabaseStatement.substring(
             "CREATE DATABASE `".length(), createDatabaseStatement.length() - 1);
-
     CreateDatabaseRequest request =
         CreateDatabaseRequest.newBuilder()
             .setParent(instanceName)
