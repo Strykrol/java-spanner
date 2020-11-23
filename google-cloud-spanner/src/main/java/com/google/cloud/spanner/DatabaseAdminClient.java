@@ -132,8 +132,8 @@ public interface DatabaseAdminClient {
    * Backup backup = op.get();
    * }</pre>
    *
-   * @param instanceId the id of the instance where the database to backup is located and where the
-   *     backup will be created.
+   * @param sourceInstanceId the id of the instance where the database to backup is located and
+   *     where the backup will be created.
    * @param backupId the id of the backup which will be created. It must conform to the regular
    *     expression [a-z][a-z0-9_\-]*[a-z0-9] and be between 2 and 60 characters in length.
    * @param databaseId the id of the database to backup.
@@ -142,6 +142,32 @@ public interface DatabaseAdminClient {
   OperationFuture<Backup, CreateBackupMetadata> createBackup(
       String sourceInstanceId, String backupId, String databaseId, Timestamp expireTime)
       throws SpannerException;
+
+  /**
+   * Creates a new backup from a database in a Cloud Spanner. Any configuration options in the
+   * {@link Backup} instance will be included in the {@link
+   * com.google.spanner.admin.database.v1.CreateBackupRequest}.
+   *
+   * <p>Example to create an encrypted backup.
+   *
+   * <pre>{@code
+   * final Backup backupInfo = dbAdminClient
+   *     .newBackupBuilder(BackupId.of("my-project", "my-instance", "my-backup"))
+   *     .setDatabase(DatabaseId.of("my-project", "my-instance", "my-database"))
+   *     .setExpireTime(Timestamp.ofTimeMicroseconds(micros))
+   *     .setEncryptionConfigInfo(
+   *         EncryptionConfigInfo.ofKey(
+   *             "projects/my-project/locations/some-location/keyRings/my-keyring/cryptoKeys/my-key"))
+   *     .build();
+   * final OperationFuture<Backup, CreateBackupMetadata> op = dbAdminClient
+   *     .createBackup(backupInfo);
+   *
+   * final Backup backup = op.get();
+   * }</pre>
+   *
+   * @see also {@link #createBackup(String, String, String, Timestamp)}
+   */
+  OperationFuture<Backup, CreateBackupMetadata> createBackup(Backup backup) throws SpannerException;
 
   /**
    * Restore a database from a backup. The database that is restored will be created and may not

@@ -120,14 +120,20 @@ class DatabaseAdminClientImpl implements DatabaseAdminClient {
   public OperationFuture<Backup, CreateBackupMetadata> createBackup(
       String instanceId, String backupId, String databaseId, Timestamp expireTime)
       throws SpannerException {
-    com.google.spanner.admin.database.v1.Backup backup =
-        com.google.spanner.admin.database.v1.Backup.newBuilder()
-            .setDatabase(getDatabaseName(instanceId, databaseId))
-            .setExpireTime(expireTime.toProto())
+    final Backup backupInfo =
+        newBackupBuilder(BackupId.of(projectId, instanceId, backupId))
+            .setDatabase(DatabaseId.of(projectId, instanceId, databaseId))
+            .setExpireTime(expireTime)
             .build();
-    String instanceName = getInstanceName(instanceId);
-    OperationFuture<com.google.spanner.admin.database.v1.Backup, CreateBackupMetadata>
-        rawOperationFuture = rpc.createBackup(instanceName, backupId, backup);
+
+    return createBackup(backupInfo);
+  }
+
+  @Override
+  public OperationFuture<Backup, CreateBackupMetadata> createBackup(Backup backupInfo)
+      throws SpannerException {
+    final OperationFuture<com.google.spanner.admin.database.v1.Backup, CreateBackupMetadata>
+        rawOperationFuture = rpc.createBackup(backupInfo);
 
     return new OperationFutureImpl<Backup, CreateBackupMetadata>(
         rawOperationFuture.getPollingFuture(),
@@ -144,6 +150,7 @@ class DatabaseAdminClientImpl implements DatabaseAdminClient {
                     .setName(proto.getName())
                     .setExpireTime(proto.getExpireTime())
                     .setState(proto.getState())
+                    .setEncryptionInfo(proto.getEncryptionInfo())
                     .build(),
                 DatabaseAdminClientImpl.this);
           }
