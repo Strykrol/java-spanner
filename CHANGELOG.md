@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://www.github.com/googleapis/java-spanner/compare/v3.1.3...v3.2.0) (2020-12-15)
+
+
+### Features
+
+* introduce TransactionOptions and UpdateOptions ([#716](https://www.github.com/googleapis/java-spanner/issues/716)) ([5c96fab](https://www.github.com/googleapis/java-spanner/commit/5c96fab6d1c19518d52d0a7f0d634f0526066f03))
+
 ### [3.1.3](https://www.github.com/googleapis/java-spanner/compare/v3.1.2...v3.1.3) (2020-12-14)
 
 
